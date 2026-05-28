@@ -1,0 +1,42 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Car {
+  id           Int    @id @default(autoincrement())
+  make         String
+  model        String
+  variant      String
+  year         Int
+  priceLakh    Float  @map("price_lakh")
+  fuelType     String @map("fuel_type")
+  transmission String
+  bodyType     String @map("body_type")
+  mileageKmpl  Float  @map("mileage_kmpl")
+  engineCc     Int    @map("engine_cc")
+  seats        Int
+  safetyRating Int    @map("safety_rating")
+  features     String // JSON array stored as string
+  pros         String // JSON array stored as string
+  cons         String // JSON array stored as string
+  summary      String
+
+  @@map("cars")
+}
+
+model QuizResult {
+  id              Int      @id @default(autoincrement())
+  budget          String
+  usage           String
+  fuelType        String   @map("fuel_type")
+  bodyType        String   @map("body_type")
+  priority        String
+  recommendedCars String   @map("recommended_cars") // JSON array of car IDs
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  @@map("quiz_results")
+}
