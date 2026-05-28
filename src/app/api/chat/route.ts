@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { chatWithAI } from "@/lib/ai";
+import { getFallbackChatResponse } from "@/lib/fallback-chat";
 import { z } from "zod";
 
 const ChatRequestSchema = z.object({
@@ -25,8 +26,15 @@ export async function POST(request: NextRequest) {
     }
 
     const { messages, context } = parseResult.data;
+    const lastUserMessage = messages[messages.length - 1]?.content || "";
 
-    const response = await chatWithAI(messages, context);
+    let response;
+    try {
+      response = await chatWithAI(messages, context);
+    } catch (aiError) {
+      console.warn("AI chat failed, falling back to local chat engine:", aiError);
+      response = getFallbackChatResponse(lastUserMessage, context);
+    }
 
     return NextResponse.json({ message: response });
   } catch (error) {
@@ -37,3 +45,4 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { QuizAnswersSchema } from "@/lib/types";
 import { getAllCars, getCarsByIds, getCarsAsContextString } from "@/lib/cars";
 import { getRecommendations } from "@/lib/ai";
+import { getFallbackRecommendations } from "@/lib/fallback-recommendations";
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,24 +23,44 @@ export async function POST(request: NextRequest) {
     const allCars = await getAllCars();
     const carsContext = getCarsAsContextString(allCars);
 
-    // Get AI recommendations
-    const aiResponse = await getRecommendations(answers, carsContext);
+    let results;
+    try {
+      // Get AI recommendations
+      const aiResponse = await getRecommendations(answers, carsContext);
 
-    // Fetch full car data for recommended cars
-    const carIds = aiResponse.recommendations.map((r) => r.carId);
-    const cars = await getCarsByIds(carIds);
+      // Fetch full car data for recommended cars
+      const carIds = aiResponse.recommendations.map((r) => r.carId);
+      const cars = await getCarsByIds(carIds);
 
-    // Join AI reasoning with car data
-    const results = aiResponse.recommendations.map((rec) => {
-      const car = cars.find((c) => c.id === rec.carId);
-      if (!car) return null;
-      return {
-        ...car,
-        matchScore: rec.matchScore,
-        reason: rec.reason,
-        highlights: rec.highlights,
-      };
-    }).filter(Boolean);
+      // Join AI reasoning with car data
+      results = aiResponse.recommendations.map((rec) => {
+        const car = cars.find((c) => c.id === rec.carId);
+        if (!car) return null;
+        return {
+          ...car,
+          matchScore: rec.matchScore,
+          reason: rec.reason,
+          highlights: rec.highlights,
+        };
+      }).filter(Boolean);
+    } catch (aiError) {
+      console.warn("AI recommendation failed, falling back to local matching engine:", aiError);
+      
+      const fallbackResponse = getFallbackRecommendations(answers, allCars);
+      const carIds = fallbackResponse.recommendations.map((r) => r.carId);
+      const cars = await getCarsByIds(carIds);
+
+      results = fallbackResponse.recommendations.map((rec) => {
+        const car = cars.find((c) => c.id === rec.carId);
+        if (!car) return null;
+        return {
+          ...car,
+          matchScore: rec.matchScore,
+          reason: rec.reason,
+          highlights: rec.highlights,
+        };
+      }).filter(Boolean);
+    }
 
     return NextResponse.json({ recommendations: results });
   } catch (error) {
@@ -50,3 +71,4 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+

@@ -90,15 +90,15 @@ export async function getRecommendations(
     throw new Error("No text response from AI");
   }
 
-  const parsed = JSON.parse(textContent.text) as RecommendationResponse;
+  const parsed = JSON.parse(textContent.text) as any;
 
   // Normalize the response
   return {
-    recommendations: parsed.recommendations.map((r) => ({
-      carId: r.car_id ?? (r as Record<string, unknown>).carId as number,
-      matchScore: r.match_score ?? (r as Record<string, unknown>).matchScore as number,
-      reason: r.reason,
-      highlights: r.highlights,
+    recommendations: (parsed.recommendations || []).map((r: any) => ({
+      carId: Number(r.carId ?? r.car_id),
+      matchScore: Number(r.matchScore ?? r.match_score ?? 90),
+      reason: String(r.reason || ""),
+      highlights: Array.isArray(r.highlights) ? r.highlights.map(String) : [],
     })),
   };
 }

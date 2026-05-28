@@ -7,12 +7,14 @@ import CarDetail from "@/components/CarDetail";
 import ComparePanel from "@/components/ComparePanel";
 import ChatPanel from "@/components/ChatPanel";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import BrowseCatalog from "@/components/BrowseCatalog";
 import { QuizAnswers, RecommendedCar } from "@/lib/types";
 
-type AppView = "landing" | "quiz" | "loading" | "results" | "detail" | "compare";
+type AppView = "landing" | "quiz" | "loading" | "results" | "detail" | "compare" | "catalog";
 
 export default function HomePage() {
   const [view, setView] = useState<AppView>("landing");
+  const [backView, setBackView] = useState<AppView>("results");
   const [quizAnswers, setQuizAnswers] = useState<QuizAnswers | null>(null);
   const [recommendations, setRecommendations] = useState<RecommendedCar[]>([]);
   const [selectedCar, setSelectedCar] = useState<RecommendedCar | null>(null);
@@ -38,6 +40,7 @@ export default function HomePage() {
       const data = await res.json();
       setRecommendations(data.recommendations);
       setView("results");
+      setBackView("results");
     } catch (err) {
       console.error("Failed to get recommendations:", err);
       setError("Something went wrong. Please try again.");
@@ -47,6 +50,7 @@ export default function HomePage() {
 
   const handleViewDetails = (car: RecommendedCar) => {
     setSelectedCar(car);
+    setBackView(view);
     setView("detail");
   };
 
@@ -54,6 +58,7 @@ export default function HomePage() {
     if (compareCars.find((c) => c.id === car.id)) return;
     const updated = [...compareCars, car].slice(0, 3);
     setCompareCars(updated);
+    setBackView(view);
     if (updated.length >= 2) {
       setView("compare");
     }
@@ -86,10 +91,29 @@ export default function HomePage() {
               Answer 5 quick questions and let our AI match you with the best cars 
               from 33+ options in the Indian market. No more confusion, just confidence.
             </p>
-            <button className="landing-cta" onClick={() => setView("quiz")}>
-              Start Car Quiz
-              <span className="cta-arrow">→</span>
-            </button>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "16px", justifyContent: "center", marginTop: "1rem" }}>
+              <button className="landing-cta" onClick={() => setView("quiz")}>
+                Start Car Quiz
+                <span className="cta-arrow">→</span>
+              </button>
+              <button 
+                className="landing-cta btn-secondary" 
+                style={{ 
+                  background: "transparent", 
+                  color: "var(--accent-primary)", 
+                  border: "2px solid var(--accent-primary)", 
+                  boxShadow: "none",
+                  display: "inline-flex",
+                  alignItems: "center"
+                }} 
+                onClick={() => {
+                  setView("catalog");
+                  setBackView("catalog");
+                }}
+              >
+                Browse All Cars
+              </button>
+            </div>
             <div className="landing-stats">
               <div className="stat">
                 <span className="stat-number">33+</span>
@@ -134,9 +158,14 @@ export default function HomePage() {
                 Based on your preferences, here are the cars we think you&apos;ll love
               </p>
             </div>
-            <button className="btn-ghost" onClick={handleRetakeQuiz}>
-              ↻ Retake Quiz
-            </button>
+            <div style={{ display: "flex", gap: "10px" }}>
+              <button className="btn-ghost" onClick={() => setView("catalog")}>
+                🔍 Browse All Cars
+              </button>
+              <button className="btn-ghost" onClick={handleRetakeQuiz}>
+                ↻ Retake Quiz
+              </button>
+            </div>
           </div>
 
           <div className="results-grid">
@@ -168,7 +197,7 @@ export default function HomePage() {
         <div className="detail-page">
           <CarDetail
             car={selectedCar}
-            onBack={() => setView("results")}
+            onBack={() => setView(backView)}
             onCompare={handleCompare}
           />
           {quizAnswers && recommendations.length > 0 && (
@@ -183,12 +212,21 @@ export default function HomePage() {
           <ComparePanel
             cars={compareCars}
             onRemove={handleRemoveCompare}
-            onClose={() => setView("results")}
+            onClose={() => setView(backView)}
           />
           {quizAnswers && recommendations.length > 0 && (
             <ChatPanel quizAnswers={quizAnswers} recommendedCars={recommendations} />
           )}
         </div>
+      )}
+
+      {/* Catalog */}
+      {view === "catalog" && (
+        <BrowseCatalog
+          onBack={() => setView("landing")}
+          onViewDetails={handleViewDetails}
+          onCompare={handleCompare}
+        />
       )}
     </main>
   );

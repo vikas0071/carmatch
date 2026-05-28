@@ -1376,3 +1376,215 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--text-muted);
 }
+
+/* ===== CATALOG PAGE ===== */
+.catalog-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  padding-top: 3rem;
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.catalog-header {
+  margin-bottom: 2.5rem;
+}
+
+.back-to-landing {
+  margin-bottom: 1.5rem;
+}
+
+.catalog-title-wrapper {
+  text-align: center;
+}
+
+.catalog-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.5rem;
+}
+
+.catalog-subtitle {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.catalog-filter-bar {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.search-box-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.search-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1rem;
+  color: var(--text-muted);
+}
+
+.catalog-search {
+  width: 100%;
+  padding: 14px 16px 14px 44px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  outline: none;
+  font-family: var(--font);
+  transition: all 0.2s ease;
+}
+
+.catalog-search:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.15);
+}
+
+.clear-search {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: color 0.2s;
+}
+
+.clear-search:hover {
+  color: var(--text-primary);
+}
+
+.filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.filter-select-wrapper {
+  flex: 1;
+  min-width: 160px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filter-select-wrapper label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.filter-select-wrapper select {
+  padding: 10px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: 0.88rem;
+  outline: none;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.filter-select-wrapper select:focus {
+  border-color: var(--accent-primary);
+}
+
+.catalog-results-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.catalog-count {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  gap: 1.25rem;
+}
+
+.catalog-card-wrapper {
+  height: 100%;
+}
+
+.catalog-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.catalog-card .car-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.catalog-loading {
+  text-align: center;
+  padding: 3rem 0;
+  color: var(--text-secondary);
+}
+
+.catalog-error {
+  text-align: center;
+  padding: 2rem;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: var(--radius-md);
+  color: var(--accent-red);
+}
+
+.catalog-empty {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  max-width: 500px;
+  margin: 3rem auto;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.catalog-empty h3 {
+  font-size: 1.3rem;
+  margin-bottom: 0.5rem;
+}
+
+.catalog-empty p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
